@@ -19,6 +19,7 @@ void IncrementLevel(std::unique_ptr<Player> &player)
 
 int GenerateStats()
 {
+    srand(time(0));
     int randomNum = rand() % 10 + 1;
     return randomNum;
 }
@@ -37,6 +38,7 @@ std::map<int, int> GenerateValuesMap()
 
 int RandomEncounter(int num)
 {
+    srand(time(0));
     return rand() % num + 1;
 }
 
