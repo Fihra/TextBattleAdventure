@@ -67,8 +67,6 @@ int main()
     //IncrementLevel(player1);
     //IncrementLevel(player1);
     IncrementLevel(player1);
-    
-    std::cout << "Show current level outside that function: " << player1->getLevel() << "\n";
 
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
@@ -120,9 +118,22 @@ int main()
     //goblin->ShowStats();
     Battle battle;
 
-    battle.Attacking(player1, goblin);
+    //int& playerHealth = player1->battleStats()[1];
+
+    do
+    {
+        if (goblin->battleStats()[1] <= 0)
+        {
+            break;
+        }
+
+        battle.Attacking(player1, goblin);
+        battle.Defending(goblin, player1);
+
+
+    } while (player1->battleStats()[1] > 0);
+
     
-
-
+   
     std::cout << "done";
 }
