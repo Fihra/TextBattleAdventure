@@ -5,9 +5,15 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <Windows.h>
+#include <windows.h>
+#include <Mmsystem.h>
+#include  <mciapi.h>
 #include "Player.h"
 #include "Enemy.h"
 #include "Battle.h"
+
+#pragma comment(lib, "winmm.lib")
 
 void IncrementLevel(std::unique_ptr<Player> &player)
 {
@@ -19,7 +25,6 @@ void IncrementLevel(std::unique_ptr<Player> &player)
 
 int GenerateStats()
 {
-    srand(time(0));
     int randomNum = rand() % 10 + 1;
     return randomNum;
 }
@@ -38,21 +43,18 @@ std::map<int, int> GenerateValuesMap()
 
 int RandomEncounter(int num)
 {
-    srand(time(0));
     return rand() % num + 1;
 }
 
 int main()
 {
     std::cout << "Text Adventure!\n";
-
-    std::string name;
-
     std::cout << "What is your name?\n";
-
+    std::string name;
     std::cin >> name;
 
-
+    //sndPlaySound("BattleThemeTest.wav", SND_FILENAME | SND_ASYNC);
+    //mciSendString("play wav", NULL, 0, NULL);
     std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1));
     //Player player1 = Player(name);
     std::unique_ptr<Player> player1(new Player(name));
@@ -77,6 +79,7 @@ int main()
 
     //statsValues[0] = GenerateStats();
     //statsValues[1] = GenerateStats();
+    srand(time(0));
 
     player1->SetStats(GenerateValuesMap());
 
@@ -100,12 +103,15 @@ int main()
             player1->ShowStats();
         }
     } while (choice != 'n');
-
+    PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     std::cout << "Ready for Adventure!" << "\n";
 
     player1->ShowStats();
 
-    int step = 100;
+    std::cout << "You are traveling across the main road towards the Evil Castle. \n";
+    std::cout << "Every step you take...\n";
+
+    int step = 1000;
 
     do
     {
@@ -114,16 +120,18 @@ int main()
         std::cout << "Stepping: " << step << "\n";
 
     } while (step > 25);
-
+    
     std::cout << "BATTLE TIME" << "\n";
-
-    //goblin->ShowStats();
+    step = 1000;
     Battle battle;
 
     //int& playerHealth = player1->battleStats()[1];
-
+    PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     do
     {
+        //mciSendString("play BattleTheme_Test.wav", NULL, 0, NULL);
+        
+        
         if (goblin->battleStats()[1] <= 0)
         {
             break;
@@ -135,7 +143,9 @@ int main()
 
     } while (player1->battleStats()[1] > 0);
 
-    
-   
+    //PlaySound(0, 0, 0);
+    PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
+    system("pause");
     std::cout << "done";
 }
