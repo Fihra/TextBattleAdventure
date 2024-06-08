@@ -78,18 +78,18 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     //PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     do
     {
+        battle.Attacking(player, enemy);
+       
         if (enemy->battleStats()[1] <= 0)
         {
             break;
         }
-
-        battle.Attacking(player, enemy);
         battle.Defending(enemy, player);
-
 
     } while (player->battleStats()[1] > 0);
 
     std::cout << "Hooray!! You won the battle!\n";
+    player->earnEXP(enemy->getEXP());
 
     battleMusic.stop();
 }
@@ -101,7 +101,7 @@ int main()
     std::string name;
     std::cin >> name;
 
-    std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1));
+    std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1, 5));
     //Player player1 = Player(name);
     std::unique_ptr<Player> player1(new Player(name));
 
@@ -114,7 +114,7 @@ int main()
     //Player* playerPtr = &player1;
     //std::unique_ptr<Player> playerPtr (player1);
 
-    IncrementLevel(player1);
+    //IncrementLevel(player1);
 
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
@@ -167,15 +167,49 @@ int main()
     travelMusic.play();
     std::cout << "Back on the road!\n";
 
-    std::unique_ptr<Enemy> goblin2(new Enemy("Goblin2", 7, 4, 3));
+    std::unique_ptr<Enemy> goblin2(new Enemy("Goblin2", 7, 4, 3, 10));
 
     worldTravel();
 
     travelMusic.pause();
 
     battleSequence(player1, goblin2);
-    //PlaySound(0, 0, 0);
+    travelMusic.play();
     //PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
+    worldTravel();
+
+    std::cout << "You have reached a fork in the road.\n";
+    std::cout << "The left road looks like it leads into a meadow.\n";
+    std::cout << "The right road looks like a deep forest ahead.\n";
+
+    std::cout << "Which way do you go? L/R" << std::endl;
+    std::cin >> choice;
+
+    std::map<int, std::string> areas = {
+        {0, "meadow"},
+        {1, "forest"}
+    };
+
+    std::string currentArea;
+
+    do 
+    {
+        switch (tolower(choice))
+        {
+        case 'l':
+            //std::cout << "You take the path to the meadows.\n";
+            currentArea = areas[0];
+            break;
+        case 'r':
+            //std::cout << "You take the path to the deep forest.\n";
+            currentArea = areas[1];
+            break;
+        }
+    } while (tolower(choice) != 'l' || tolower(choice) != 'r');
+
+    std::cout << "You take the path to the " << currentArea.at(0) << ".\n";
+
 
     system("pause");
     std::cout << "done";
