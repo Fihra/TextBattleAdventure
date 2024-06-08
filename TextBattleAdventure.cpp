@@ -88,8 +88,12 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
 
     } while (player->battleStats()[1] > 0);
 
+    std::cout << "===============================\n";
     std::cout << "Hooray!! You won the battle!\n";
+    player->ShowStats();
     player->earnEXP(enemy->getEXP());
+    player->DisplayEXP();
+    std::cout << "===============================\n";
 
     battleMusic.stop();
 }
@@ -183,19 +187,18 @@ int main()
     std::cout << "The left road looks like it leads into a meadow.\n";
     std::cout << "The right road looks like a deep forest ahead.\n";
 
-    std::cout << "Which way do you go? L/R" << std::endl;
-    std::cin >> choice;
+    char forkOneChoice;
 
-    std::map<int, std::string> areas = {
-        {0, "meadow"},
-        {1, "forest"}
-    };
+    std::string areas[2] = {"meadow", "forest"};
 
     std::string currentArea;
 
     do 
     {
-        switch (tolower(choice))
+        std::cout << "Which way do you go? (l)eft/(r)ight" << std::endl;
+        std::cin >> forkOneChoice;
+
+        switch (forkOneChoice)
         {
         case 'l':
             //std::cout << "You take the path to the meadows.\n";
@@ -206,9 +209,9 @@ int main()
             currentArea = areas[1];
             break;
         }
-    } while (tolower(choice) != 'l' || tolower(choice) != 'r');
+    } while (forkOneChoice != 'l' && forkOneChoice != 'r');
 
-    std::cout << "You take the path to the " << currentArea.at(0) << ".\n";
+    std::cout << "You take the path to the " << currentArea << ".\n";
 
 
     system("pause");
