@@ -3,13 +3,14 @@
 #include <string>
 #include <map>
 
-Enemy::Enemy(std::string newName, int newHP, int newAttack, int newDefense)
+Enemy::Enemy(std::string newName, int newHP, int newAttack, int newDefense, int newEXP)
 {
 	name = newName;
 	maxHP = newHP;
 	currentHP = maxHP;
 	attack = newAttack;
 	defense = newDefense;
+	expGiven = newEXP;
 }
 
 std::string Enemy::getName()
@@ -23,7 +24,11 @@ void Enemy::ShowStats()
 	std::cout << "HP: " << currentHP << "/" << maxHP << "\n";
 	std::cout << "Atk: " << attack << "\n";
 	std::cout << "Def: " << defense << "\n";
+}
 
+int Enemy::getEXP()
+{
+	return expGiven;
 }
 
 std::vector<int> Enemy::battleStats()
