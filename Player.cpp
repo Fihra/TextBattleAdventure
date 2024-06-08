@@ -9,6 +9,8 @@ Player::Player(std::string newName)
 {
 	name = newName;
 	level = 1;
+	totalEXP = 5;
+	expToNextLevel = 0;
 }
 
 std::string Player::getName()
@@ -24,6 +26,31 @@ int Player::getLevel()
 void Player::addLevel()
 {
 	level++;
+}
+
+void Player::earnEXP(int exp)
+{
+
+	int remainingEXP = expToNextLevel + exp;
+
+	if (remainingEXP >= totalEXP)
+	{
+		Player::addLevel();
+		Player::levelUpStats();
+		expToNextLevel = 0;
+		totalEXP += totalEXP;
+		remainingEXP -= totalEXP;
+		Player::earnEXP(remainingEXP);
+	}
+
+}
+
+void Player::levelUpStats()
+{
+	maxHP += (rand() % 5 + 1);
+	currentHP = maxHP;
+	attack += (rand() % 5 + 1);
+	defense += (rand() % 5 + 1);
 }
 
 void Player::SetStats(std::map<int, int> vals)
@@ -43,14 +70,13 @@ void Player::SetStats(std::map<int, int> vals)
 				defense = v.second;
 				break;
 		}
-		//std::cout << "first: " << v.first << "\n";
-		//std::cout << "second: " << v.second << "\n";
 	}
 }
 
 void Player::ShowStats()
 {
 	std::cout << "Name: " << name << "\n";
+	std::cout << "Level: " << level << "\n";
 	std::cout << "HP: " << currentHP << "/" << maxHP << "\n";
 	std::cout << "Attack: " << attack << "\n";
 	std::cout << "Defense: " << defense << "\n";

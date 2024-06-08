@@ -16,6 +16,8 @@ private:
 	int currentHP;
 	int attack;
 	int defense;
+	int totalEXP;
+	int expToNextLevel;
 
 public:
 	Player(std::string newName);
@@ -24,6 +26,8 @@ public:
 	void addLevel();
 	void SetStats(std::map<int, int> vals);
 	void ShowStats();
+	void earnEXP(int exp);
+	void levelUpStats();
 	std::vector<int> battleStats();
 	void setHP(std::string command, int amount);
 };
