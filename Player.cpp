@@ -109,3 +109,9 @@ void Player::setHP(std::string command, int amount)
 		}
 	}
 }
+
+void Player::DisplayEXP()
+{
+	std::cout << "Total EXP: " << totalEXP << "\n";
+	Player::ShowStats();
+}

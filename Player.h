@@ -26,6 +26,7 @@ public:
 	void addLevel();
 	void SetStats(std::map<int, int> vals);
 	void ShowStats();
+	void DisplayEXP();
 	void earnEXP(int exp);
 	void levelUpStats();
 	std::vector<int> battleStats();
