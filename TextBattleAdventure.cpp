@@ -1,4 +1,4 @@
-// TestCPlusPlus.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// TestCPlusPlus.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>
@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Battle.h"
+#include "Area.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -92,6 +93,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     std::cout << "Hooray!! You won the battle!\n";
     player->ShowStats();
     player->earnEXP(enemy->getEXP());
+    std::cout << "LEVEL UP!!!!!!\n";
     player->DisplayEXP();
     std::cout << "===============================\n";
 
@@ -100,17 +102,15 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
 
 int main()
 {
-    std::cout << "Text Adventure!\n";
+    std::cout << "Auto Battle Text Adventure!\n";
     std::cout << "What is your name?\n";
     std::string name;
     std::cin >> name;
 
     std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1, 5));
-    //Player player1 = Player(name);
     std::unique_ptr<Player> player1(new Player(name));
-
     std::cout << "Welcome " << player1->getName() << "\n";
-
+    //Player player1 = Player(name);
    /* int randomNum = 5;
     int *ptr = &randomNum;
     std::cout << *ptr;*/
@@ -126,17 +126,9 @@ int main()
     srand(time(0));
 
     player1->SetStats(GenerateValuesMap());
-
-    //player1->SetStats(statsValues);
-    /*for (auto val : statsValues)
-    {
-        std::cout << val.first << ": " << val.second << "\n";
-       
-    }*/
     player1->ShowStats();
 
     char choice;
-
     do
     {
         std::cout << "Reroll stats? y/n" << "\n";
@@ -189,9 +181,9 @@ int main()
 
     char forkOneChoice;
 
-    std::string areas[2] = {"meadow", "forest"};
-
+    std::string areas[4] = {"meadow", "forest", "mountain", "castle"};
     std::string currentArea;
+    std::unique_ptr<Area> mainArea;
 
     do 
     {
@@ -201,17 +193,55 @@ int main()
         switch (forkOneChoice)
         {
         case 'l':
-            //std::cout << "You take the path to the meadows.\n";
             currentArea = areas[0];
+            //mainArea->setCurrentArea(areas[0]);
+
             break;
         case 'r':
-            //std::cout << "You take the path to the deep forest.\n";
             currentArea = areas[1];
+            //mainArea->setCurrentArea(areas[1]);
             break;
         }
     } while (forkOneChoice != 'l' && forkOneChoice != 'r');
 
     std::cout << "You take the path to the " << currentArea << ".\n";
+    //std::cout << "You take the path to the " << mainArea->getCurrentArea() << ".\n";
+
+    if (currentArea == "meadow")
+    {
+        mainArea->MeadowMap();
+        worldTravel();
+        std::unique_ptr<Enemy> mushdoom(new Enemy("Mushdoom", 10, 5, 5, 20));
+        travelMusic.pause();
+        battleSequence(player1, mushdoom);
+        travelMusic.play();
+        worldTravel();
+        std::unique_ptr<Enemy> boisonFlora(new Enemy("BoisonFlora", 25, 4, 9, 50));
+        travelMusic.pause();
+        battleSequence(player1, boisonFlora);
+        travelMusic.play();
+
+    }
+    else if (currentArea == "forest")
+    {
+        mainArea->ForestMap();
+        worldTravel();
+        mainArea->RestMap();
+        worldTravel();
+        std::unique_ptr<Enemy> squirrelSoldier(new Enemy("Squirrel Soldier", 15, 7, 4, 20));
+        travelMusic.pause();
+        battleSequence(player1, squirrelSoldier);
+        travelMusic.play();
+        worldTravel();
+        std::unique_ptr<Enemy> dearDeer(new Enemy("Dear Deer", 20, 8, 5, 50));
+        travelMusic.pause();
+        battleSequence(player1, dearDeer);
+        travelMusic.play();
+    }
+
+    mainArea->RestMap();
+    mainArea->MountainMap();
+    //worldTravel();
 
 
     system("pause");
