@@ -66,7 +66,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     std::cout << "====================\n";
     sf::Music battleMusic;
 
-    if (!battleMusic.openFromFile("BattleTheme_Test.wav"))
+    if (!battleMusic.openFromFile("music/Fierce_Fight-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
     }
@@ -107,7 +107,7 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
     std::cout << "====================\n";
     sf::Music bossMusic;
 
-    if (!bossMusic.openFromFile("BattleTheme_Test.wav"))
+    if (!bossMusic.openFromFile("music/Beat_the_Boss-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
     }
@@ -184,7 +184,7 @@ int main()
     sf::Music travelMusic;
     //PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
    
-    if (!travelMusic.openFromFile("Travel_Theme.wav"))
+    if (!travelMusic.openFromFile("music/Open_Travel-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
     }
@@ -243,39 +243,61 @@ int main()
     } while (forkOneChoice != 'l' && forkOneChoice != 'r');
 
     std::cout << "You take the path to the " << currentArea << ".\n";
-
+    travelMusic.stop();
     if (currentArea == "meadow")
     {
+        sf::Music meadowMusic;
+
+        if (!meadowMusic.openFromFile("music/Meadows-Battle_Text_Adventure.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        meadowMusic.setLoop(true);
+        meadowMusic.play();
+
         mainArea->MeadowMap();
         worldTravel();
         std::unique_ptr<Enemy> mushdoom(new Enemy("Mushdoom", 10, 5, 5, 20));
-        travelMusic.pause();
+        meadowMusic.pause();
         battleSequence(player1, mushdoom);
-        travelMusic.play();
+        meadowMusic.play();
         worldTravel();
         std::unique_ptr<Enemy> boisonFlora(new Enemy("BoisonFlora", 25, 4, 9, 50));
-        travelMusic.pause();
-        battleSequence(player1, boisonFlora);
-        travelMusic.play();
+        meadowMusic.pause();
+        bossSequence(player1, boisonFlora);
+        meadowMusic.play();
+        meadowMusic.stop();
 
     }
     else if (currentArea == "forest")
     {
+        sf::Music forestMusic;
+
+        if (!forestMusic.openFromFile("music/Forestry-Battle_Text_Adventure.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        forestMusic.setLoop(true);
+        forestMusic.play();
+
         mainArea->ForestMap();
         worldTravel();
         mainArea->RestMap();
         worldTravel();
         std::unique_ptr<Enemy> squirrelSoldier(new Enemy("Squirrel Soldier", 15, 7, 4, 20));
-        travelMusic.pause();
+        forestMusic.pause();
         battleSequence(player1, squirrelSoldier);
-        travelMusic.play();
+        forestMusic.play();
         worldTravel();
         //Add Boss Music
         std::unique_ptr<Enemy> dearDeer(new Enemy("Dear Deer", 20, 8, 5, 50));
-        travelMusic.pause();
-        battleSequence(player1, dearDeer);
-        travelMusic.play();
+        forestMusic.pause();
+        bossSequence(player1, dearDeer);
+        forestMusic.play();
+        forestMusic.play();
     }
+
+    travelMusic.play();
 
     mainArea->RestMap();
     mainArea->MountainMap();
