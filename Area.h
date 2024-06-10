@@ -14,6 +14,10 @@ public:
 	void ForestMap();
 	void MountainMap();
 	void CastleMap();
+	void CastleRooms();
+	void TrapRoomDisplay();
+	void SafeRoomDisplay();
+	bool RandomRoom();
 	void RestMap();
 };
 

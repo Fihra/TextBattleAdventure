@@ -66,7 +66,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     std::cout << "====================\n";
     sf::Music battleMusic;
 
-    if (!battleMusic.openFromFile("BattleTheme_Test.wav"))
+    if (!battleMusic.openFromFile("music/Fierce_Fight-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
     }
@@ -100,6 +100,47 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     battleMusic.stop();
 }
 
+void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy)
+{
+    std::cout << "====================\n";
+    std::cout << "Boss TIME" << "\n";
+    std::cout << "====================\n";
+    sf::Music bossMusic;
+
+    if (!bossMusic.openFromFile("music/Beat_the_Boss-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "ERror loadin music\n";
+    }
+    bossMusic.setLoop(true);
+    bossMusic.play();
+
+    Battle battle;
+
+    //int& playerHealth = player1->battleStats()[1];
+    //PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    do
+    {
+        battle.Attacking(player, enemy);
+
+        if (enemy->battleStats()[1] <= 0)
+        {
+            break;
+        }
+        battle.Defending(enemy, player);
+
+    } while (player->battleStats()[1] > 0);
+
+    std::cout << "===============================\n";
+    std::cout << "Hooray!! You won the battle!\n";
+    player->ShowStats();
+    player->earnEXP(enemy->getEXP());
+    std::cout << "LEVEL UP!!!!!!\n";
+    player->DisplayEXP();
+    std::cout << "===============================\n";
+
+    bossMusic.stop();
+}
+
 int main()
 {
     std::cout << "Auto Battle Text Adventure!\n";
@@ -123,7 +164,7 @@ int main()
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
 
-    srand(time(0));
+    srand((unsigned int)time(NULL));
 
     player1->SetStats(GenerateValuesMap());
     player1->ShowStats();
@@ -143,7 +184,7 @@ int main()
     sf::Music travelMusic;
     //PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
    
-    if (!travelMusic.openFromFile("Travel_Theme.wav"))
+    if (!travelMusic.openFromFile("music/Open_Travel-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
     }
@@ -194,54 +235,136 @@ int main()
         {
         case 'l':
             currentArea = areas[0];
-            //mainArea->setCurrentArea(areas[0]);
-
             break;
         case 'r':
             currentArea = areas[1];
-            //mainArea->setCurrentArea(areas[1]);
             break;
         }
     } while (forkOneChoice != 'l' && forkOneChoice != 'r');
 
     std::cout << "You take the path to the " << currentArea << ".\n";
-    //std::cout << "You take the path to the " << mainArea->getCurrentArea() << ".\n";
-
+    travelMusic.stop();
     if (currentArea == "meadow")
     {
+        sf::Music meadowMusic;
+
+        if (!meadowMusic.openFromFile("music/Meadows-Battle_Text_Adventure.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        meadowMusic.setLoop(true);
+        meadowMusic.play();
+
         mainArea->MeadowMap();
         worldTravel();
         std::unique_ptr<Enemy> mushdoom(new Enemy("Mushdoom", 10, 5, 5, 20));
-        travelMusic.pause();
+        meadowMusic.pause();
         battleSequence(player1, mushdoom);
-        travelMusic.play();
+        meadowMusic.play();
         worldTravel();
         std::unique_ptr<Enemy> boisonFlora(new Enemy("BoisonFlora", 25, 4, 9, 50));
-        travelMusic.pause();
-        battleSequence(player1, boisonFlora);
-        travelMusic.play();
+        meadowMusic.pause();
+        bossSequence(player1, boisonFlora);
+        meadowMusic.play();
+        meadowMusic.stop();
 
     }
     else if (currentArea == "forest")
     {
+        sf::Music forestMusic;
+
+        if (!forestMusic.openFromFile("music/Forestry-Battle_Text_Adventure.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        forestMusic.setLoop(true);
+        forestMusic.play();
+
         mainArea->ForestMap();
         worldTravel();
         mainArea->RestMap();
         worldTravel();
         std::unique_ptr<Enemy> squirrelSoldier(new Enemy("Squirrel Soldier", 15, 7, 4, 20));
-        travelMusic.pause();
+        forestMusic.pause();
         battleSequence(player1, squirrelSoldier);
-        travelMusic.play();
+        forestMusic.play();
         worldTravel();
+        //Add Boss Music
         std::unique_ptr<Enemy> dearDeer(new Enemy("Dear Deer", 20, 8, 5, 50));
-        travelMusic.pause();
-        battleSequence(player1, dearDeer);
-        travelMusic.play();
+        forestMusic.pause();
+        bossSequence(player1, dearDeer);
+        forestMusic.play();
+        forestMusic.play();
     }
+
+    travelMusic.play();
 
     mainArea->RestMap();
     mainArea->MountainMap();
-    //worldTravel();
+    worldTravel();
+    //Add Mountain Music
+    travelMusic.pause();
+    std::unique_ptr<Enemy> mountainGiant(new Enemy("Mountain Giant", 25, 8, 6, 75));
+    battleSequence(player1, mountainGiant);
+    travelMusic.play();
+
+    worldTravel();
+    std::unique_ptr<Enemy> flareFowl(new Enemy("Flare Fowl", 30, 10, 4, 100));
+    travelMusic.pause();
+    battleSequence(player1, flareFowl);
+    travelMusic.play();
+
+    mainArea->CastleMap();
+    //Add Castle Music
+    mainArea->CastleRooms();
+
+    int roomChoice;
+
+    do 
+    {
+        std::cin >> roomChoice;
+
+        switch ((int)roomChoice)
+        {
+        case 1:
+            std::cout << "You entered room 1";
+            break;
+        case 2:
+            std::cout << "You entered room 2";
+            break;
+        case 3:
+            std::cout << "You entered room 3";
+            break;
+        }
+    } while (roomChoice > 0 && roomChoice < 4);
+
+    bool enterRoom = mainArea->RandomRoom();
+
+    if (!enterRoom)
+    {
+        int trapDamage = rand() % 5 + 1;
+        player1->setHP("attack", trapDamage);
+    }
+    else
+    {
+        std::cout << "Onwards!\n";
+    }
+
+    worldTravel();
+    mainArea->RestMap();
+
+    std::unique_ptr<Enemy> chaoticWizard(new Enemy("Chaotic Wizard", 100, 5, 3, 100));
+    battleSequence(player1, chaoticWizard);
+
+    std::cout << "You Did it!! You defeated the Chaotic wizard terrorizing the world!\n";
+    std::cout << "Congrats " << player1->getName() << "!!!!\n";
+
+    std::cout << "=============================================\n";
+    std::cout << "=TTTTT   H   H  EEE    EEE  N     N   DDD   =\n";
+    std::cout << "=  T     H   H  E      E    N N   N   D  D  =\n";
+    std::cout << "=  T     HHHHH  EEE    EEE  N  N  N   D   D =\n";
+    std::cout << "=  T     H   H  E      E    N   N N   D  D  =\n";
+    std::cout << "=  T     H   H  EEE    EEE  N     N   DDD   =\n";
 
 
     system("pause");
