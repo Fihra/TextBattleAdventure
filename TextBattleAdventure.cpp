@@ -154,7 +154,9 @@ int main()
     startMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0),sf::seconds(42.666)));
     startMusic.play();
 
-    std::cout << "Auto Battle Text Adventure!\n";
+    std::cout << "____________________________\n";
+    std::cout << "|Auto Battle Text Adventure|\n";
+    std::cout << "____________________________\n";
     std::cout << "What is your name?\n";
     std::string name;
     std::cin >> name;
