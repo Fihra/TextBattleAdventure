@@ -71,6 +71,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
         std::cout << "ERror loadin music\n";
     }
     battleMusic.setLoop(true);
+    battleMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(22.588)));
     battleMusic.play();
 
     Battle battle;
@@ -112,6 +113,7 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
         std::cout << "ERror loadin music\n";
     }
     bossMusic.setLoop(true);
+    bossMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(31.999)));
     bossMusic.play();
 
     Battle battle;
@@ -143,6 +145,15 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
 
 int main()
 {
+    sf::Music startMusic;
+    if (!startMusic.openFromFile("music/Beginning-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "Error Loading Music\n";
+    }
+    startMusic.setLoop(true);
+    startMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0),sf::seconds(42.666)));
+    startMusic.play();
+
     std::cout << "Auto Battle Text Adventure!\n";
     std::cout << "What is your name?\n";
     std::string name;
@@ -181,6 +192,8 @@ int main()
         }
     } while (choice != 'n');
 
+    startMusic.stop();
+
     sf::Music travelMusic;
     //PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
    
@@ -189,6 +202,7 @@ int main()
         std::cout << "ERror loadin music\n";
     }
     travelMusic.setLoop(true);
+    travelMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
     travelMusic.play();
     std::cout << "Ready for Adventure!" << "\n";
 
@@ -253,6 +267,7 @@ int main()
             std::cout << "ERror loadin music\n";
         }
         meadowMusic.setLoop(true);
+        meadowMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(32)));
         meadowMusic.play();
 
         mainArea->MeadowMap();
@@ -278,6 +293,7 @@ int main()
             std::cout << "ERror loadin music\n";
         }
         forestMusic.setLoop(true);
+        forestMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(27.692)));
         forestMusic.play();
 
         mainArea->ForestMap();
@@ -298,21 +314,33 @@ int main()
     }
 
     travelMusic.play();
+    sf::Music mountainMusic;
 
     mainArea->RestMap();
+    travelMusic.stop();
     mainArea->MountainMap();
+
+    if (!mountainMusic.openFromFile("music/Mountain_Climb-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "ERror loadin music\n";
+    }
+    mountainMusic.setLoop(true);
+    mountainMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
+    mountainMusic.play();
+    
+
     worldTravel();
     //Add Mountain Music
-    travelMusic.pause();
+    mountainMusic.pause();
     std::unique_ptr<Enemy> mountainGiant(new Enemy("Mountain Giant", 25, 8, 6, 75));
     battleSequence(player1, mountainGiant);
-    travelMusic.play();
+    mountainMusic.play();
 
     worldTravel();
     std::unique_ptr<Enemy> flareFowl(new Enemy("Flare Fowl", 30, 10, 4, 100));
-    travelMusic.pause();
+    mountainMusic.pause();
     battleSequence(player1, flareFowl);
-    travelMusic.play();
+    mountainMusic.play();
 
     mainArea->CastleMap();
     //Add Castle Music
@@ -336,7 +364,7 @@ int main()
             std::cout << "You entered room 3";
             break;
         }
-    } while (roomChoice > 0 && roomChoice < 4);
+    } while (roomChoice < 0 && roomChoice > 3);
 
     bool enterRoom = mainArea->RandomRoom();
 
