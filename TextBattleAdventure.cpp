@@ -101,20 +101,33 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     battleMusic.stop();
 }
 
-void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy)
+void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy, bool isFinalBoss = false)
 {
     std::cout << "====================\n";
     std::cout << "Boss TIME" << "\n";
     std::cout << "====================\n";
     sf::Music bossMusic;
 
-    if (!bossMusic.openFromFile("music/Beat_the_Boss-Battle_Text_Adventure.wav"))
+    if (isFinalBoss)
     {
-        std::cout << "ERror loadin music\n";
+        if (!bossMusic.openFromFile("music/Text_Adventure-Wizard_Showdown_test.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        bossMusic.setLoop(true);
+        bossMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(64)));
+        bossMusic.play();
     }
-    bossMusic.setLoop(true);
-    bossMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(31.999)));
-    bossMusic.play();
+    else
+    {
+        if (!bossMusic.openFromFile("music/Beat_the_Boss-Battle_Text_Adventure.wav"))
+        {
+            std::cout << "ERror loadin music\n";
+        }
+        bossMusic.setLoop(true);
+        bossMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(31.999)));
+        bossMusic.play();
+    }
 
     Battle battle;
 
@@ -312,7 +325,6 @@ int main()
         forestMusic.pause();
         bossSequence(player1, dearDeer);
         forestMusic.play();
-        forestMusic.play();
     }
 
     travelMusic.play();
@@ -320,8 +332,7 @@ int main()
 
     mainArea->RestMap();
     travelMusic.stop();
-    mainArea->MountainMap();
-
+    
     if (!mountainMusic.openFromFile("music/Mountain_Climb-Battle_Text_Adventure.wav"))
     {
         std::cout << "ERror loadin music\n";
@@ -329,7 +340,8 @@ int main()
     mountainMusic.setLoop(true);
     mountainMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
     mountainMusic.play();
-    
+
+    mainArea->MountainMap();
 
     worldTravel();
     //Add Mountain Music
@@ -372,6 +384,7 @@ int main()
 
     if (!enterRoom)
     {
+        std::cout << "TRAP TIME!!\n";
         int trapDamage = rand() % 5 + 1;
         player1->setHP("attack", trapDamage);
     }
@@ -383,8 +396,20 @@ int main()
     worldTravel();
     mainArea->RestMap();
 
+    mountainMusic.stop();
+
     std::unique_ptr<Enemy> chaoticWizard(new Enemy("Chaotic Wizard", 100, 5, 3, 100));
-    battleSequence(player1, chaoticWizard);
+    bossSequence(player1, chaoticWizard, true);
+
+    sf::Music endingMusic;
+
+    if (!endingMusic.openFromFile("music/The_End-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "ERror loadin music\n";
+    }
+    endingMusic.setLoop(true);
+    endingMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(21.333)));
+    endingMusic.play();
 
     std::cout << "You Did it!! You defeated the Chaotic wizard terrorizing the world!\n";
     std::cout << "Congrats " << player1->getName() << "!!!!\n";
@@ -395,6 +420,7 @@ int main()
     std::cout << "=  T     HHHHH  EEE    EEE  N  N  N   D   D =\n";
     std::cout << "=  T     H   H  E      E    N   N N   D  D  =\n";
     std::cout << "=  T     H   H  EEE    EEE  N     N   DDD   =\n";
+    std::cout << "=============================================\n";
 
 
     system("pause");
