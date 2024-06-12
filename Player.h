@@ -18,12 +18,13 @@ private:
 	int defense;
 	int totalEXP;
 	int expToNextLevel;
-
+	bool isAlive;
 public:
 	Player(std::string newName);
 	std::string getName();
 	int getLevel();
-	void addLevel();
+	bool lifeStatus();
+	void setLifeStatus(bool status);
 	void SetStats(std::map<int, int> vals);
 	void ShowStats();
 	void DisplayEXP();
