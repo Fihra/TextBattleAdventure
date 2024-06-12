@@ -11,6 +11,7 @@ Player::Player(std::string newName)
 	level = 1;
 	totalEXP = 5;
 	expToNextLevel = 0;
+	isAlive = true;
 }
 
 std::string Player::getName()
@@ -23,9 +24,14 @@ int Player::getLevel()
 	return level;
 }
 
-void Player::addLevel()
+bool Player::lifeStatus()
 {
-	level++;
+	return isAlive;
+}
+
+void Player::setLifeStatus(bool status)
+{
+	isAlive = status;
 }
 
 void Player::earnEXP(int exp)
@@ -35,7 +41,6 @@ void Player::earnEXP(int exp)
 
 	if (remainingEXP >= totalEXP)
 	{
-		Player::addLevel();
 		Player::levelUpStats();
 		expToNextLevel = 0;
 		totalEXP += totalEXP;
@@ -47,10 +52,24 @@ void Player::earnEXP(int exp)
 
 void Player::levelUpStats()
 {
+	std::cout << "LEVEL UP!!!!!!\n";
+
+	int oldHP = maxHP;
+	int oldAttack = attack;
+	int oldDefense = defense;
+	int oldLevel = level;
+
+	level++;
 	maxHP += (rand() % 5 + 1);
 	currentHP = maxHP;
 	attack += (rand() % 5 + 1);
 	defense += (rand() % 5 + 1);
+
+	std::cout << "Level: " << oldLevel << " -> " << level << "\n";
+	std::cout << "HP: " << oldHP << " -> " << maxHP << "\n";
+	std::cout << "Attack: " << oldAttack << " -> " << attack << "\n";
+	std::cout << "Defense: " << oldDefense << " -> " << defense << "\n";
+
 }
 
 void Player::SetStats(std::map<int, int> vals)
