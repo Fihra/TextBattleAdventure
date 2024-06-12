@@ -216,16 +216,16 @@ int main()
     std::cout << "|Auto Battle Text Adventure|\n";
     std::cout << "____________________________\n";
     std::cout << "                            ^    *      ^   ^    " << std::endl;
-    std::cout << "                          ^ |   / \\    |   |    " << std::endl;
+    std::cout << "                          ^ |   / \\     |   |    " << std::endl;
     std::cout << "                       ^  |    |   |     ^      " << std::endl;
-    std::cout << "      __                 |     |   |     |  ^   " << std::endl;
+    std::cout << "      __               |       |   |     |  ^   " << std::endl;
     std::cout << "     /  \\           ^         ^|___| ^      |   " << std::endl;
-    std::cout << "     \\  /           |   ^ ^ ^| ^    | ^        " << std::endl;
-    std::cout << "      ||                 | |^|  |   ^  | ^      " << std::endl;
-    std::cout << "____/|__|\\____       ^     | ^  ^  |   ^|      " << std::endl;
-    std::cout << "   / |__| \\    \\    |       |  |      |       " << std::endl;
-    std::cout << "    /_/\\_\\     \\                               " << std::endl;
-    std::cout << "__________________\\                              " << std::endl;
+    std::cout << "     \\  /           |   ^ ^ ^| ^     |^        " << std::endl;
+    std::cout << "      ||                | |^|  |    ^ |  ^      " << std::endl;
+    std::cout << "____/|__|\\____       ^     | ^  ^   |  ^ |      " << std::endl;
+    std::cout << "   / |__| \\    \\     |       |  |      |       " << std::endl;
+    std::cout << "    /_/\\_\\      \\                               " << std::endl;
+    std::cout << "_________________\\                              " << std::endl;
 
     std::cout << "What is your name?\n";
     std::string name;
