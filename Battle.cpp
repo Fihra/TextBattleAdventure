@@ -12,7 +12,10 @@ void Battle::Attacking(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& 
 	std::vector<int> playerStats = player->battleStats();
 	std::vector<int> enemyStats = enemy->battleStats();
 
-	int damageDealing = abs(playerStats[2] - enemyStats[3]); //player atk - enemy def 
+	int damageDealing = (playerStats[2] - enemyStats[3]); //player atk - enemy def 
+	if (damageDealing < 0) {
+		damageDealing = 1;
+	}
 
 	std::cout << player->getName() << " deals " << damageDealing << " damage to " << enemy->getName() << "\n";
 
@@ -34,7 +37,10 @@ void Battle::Defending(std::unique_ptr<Enemy>& enemy, std::unique_ptr<Player>& p
 	std::vector<int> enemyStats = enemy->battleStats();
 	std::vector<int> playerStats = player->battleStats();
 
-	int damageDealing = abs(enemyStats[2] - playerStats[3]); //enemy atk - player def 
+	int damageDealing = (enemyStats[2] - playerStats[3]); //enemy atk - player def 
+	if (damageDealing < 0) {
+		damageDealing = 1;
+	}
 
 	std::cout << enemy->getName() << " deals " << damageDealing << " damage to " << player->getName() << "\n";
 
