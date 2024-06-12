@@ -15,14 +15,6 @@
 
 #pragma comment(lib, "winmm.lib")
 
-void IncrementLevel(std::unique_ptr<Player> &player)
-{
-    std::cout << "Show Current Level: " << player->getLevel() << "\n";
-    std::cout << "Incrementing Level\n";
-    player->addLevel();
-    std::cout << "New Level: " << player->getLevel() << "\n";
-}
-
 int GenerateStats()
 {
     int randomNum = rand() % 10 + 1;
@@ -64,6 +56,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     std::cout << "====================\n";
     std::cout << "BATTLE TIME" << "\n";
     std::cout << "====================\n";
+
     sf::Music battleMusic;
 
     if (!battleMusic.openFromFile("music/Fierce_Fight-Battle_Text_Adventure.wav"))
@@ -76,27 +69,53 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
 
     Battle battle;
 
+    bool isAlive = true;
+
     //int& playerHealth = player1->battleStats()[1];
     //PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     do
     {
         battle.Attacking(player, enemy);
-       
+
         if (enemy->battleStats()[1] <= 0)
         {
             break;
         }
         battle.Defending(enemy, player);
 
+        if (player->battleStats()[1] <= 0)
+        {
+            isAlive = false;
+            break;
+        }
+
     } while (player->battleStats()[1] > 0);
 
-    std::cout << "===============================\n";
-    std::cout << "Hooray!! You won the battle!\n";
-    player->ShowStats();
-    player->earnEXP(enemy->getEXP());
-    std::cout << "LEVEL UP!!!!!!\n";
-    player->DisplayEXP();
-    std::cout << "===============================\n";
+
+    if (isAlive)
+    {
+        std::cout << "===============================\n";
+        std::cout << "Hooray!! You won the battle!\n";
+        std::cout << enemy->getName() << " dropped " << enemy->getEXP() << " EXP.\n";
+        player->earnEXP(enemy->getEXP());
+        std::cout << "===============================\n";
+    }
+    else
+    {
+        std::cout << "===============================\n";
+        std::cout << "Ooooof!! REMATCH!!!\n";
+        player->setLifeStatus(true);
+        player->setHP("heal", 100);
+        enemy->setHP("heal", 100);
+        std::cout << "Quick level grind!\n";
+        player->levelUpStats();
+        std::cout << "===============================\n";
+        system("pause");
+        battleMusic.stop();
+        battleSequence(player, enemy);
+       
+    }
+
 
     battleMusic.stop();
 }
@@ -110,7 +129,7 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
 
     if (isFinalBoss)
     {
-        if (!bossMusic.openFromFile("music/Text_Adventure-Wizard_Showdown_test.wav"))
+        if (!bossMusic.openFromFile("music/Wizard_Showdown-Battle_Text_Adventure.wav"))
         {
             std::cout << "ERror loadin music\n";
         }
@@ -130,6 +149,7 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
     }
 
     Battle battle;
+    bool isAlive = true;
 
     //int& playerHealth = player1->battleStats()[1];
     //PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
@@ -143,15 +163,40 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
         }
         battle.Defending(enemy, player);
 
+        if (player->battleStats()[1] <= 0)
+        {
+            player->setLifeStatus(false);
+            break;
+        }
+
     } while (player->battleStats()[1] > 0);
 
-    std::cout << "===============================\n";
-    std::cout << "Hooray!! You won the battle!\n";
-    player->ShowStats();
-    player->earnEXP(enemy->getEXP());
-    std::cout << "LEVEL UP!!!!!!\n";
-    player->DisplayEXP();
-    std::cout << "===============================\n";
+
+    if (player->lifeStatus())
+    {
+        std::cout << "===============================\n";
+        std::cout << "Hooray!! You won the battle!\n";
+        //player->ShowStats();
+        player->earnEXP(enemy->getEXP());
+        std::cout << enemy->getName() << " dropped " << enemy->getEXP() << " EXP.\n";
+
+        //player->DisplayEXP();
+        std::cout << "===============================\n";
+    }
+    else
+    {
+        std::cout << "===============================\n";
+        std::cout << "Ooooof!! REMATCH!!!\n";
+        player->setLifeStatus(true);
+        player->setHP("heal", 100);
+        enemy->setHP("heal", 100);
+        std::cout << "Quick level grind!\n";
+        player->levelUpStats();
+        std::cout << "===============================\n";
+        system("pause");
+        bossMusic.stop();
+        bossSequence(player, enemy, isFinalBoss);
+    }
 
     bossMusic.stop();
 }
@@ -170,12 +215,27 @@ int main()
     std::cout << "____________________________\n";
     std::cout << "|Auto Battle Text Adventure|\n";
     std::cout << "____________________________\n";
+    std::cout << "                            ^    *      ^   ^    " << std::endl;
+    std::cout << "                          ^ |   / \\    |   |    " << std::endl;
+    std::cout << "                       ^  |    |   |     ^      " << std::endl;
+    std::cout << "      __                 |     |   |     |  ^   " << std::endl;
+    std::cout << "     /  \\           ^         ^|___| ^      |   " << std::endl;
+    std::cout << "     \\  /           |   ^ ^ ^| ^    | ^        " << std::endl;
+    std::cout << "      ||                 | |^|  |   ^  | ^      " << std::endl;
+    std::cout << "____/|__|\\____       ^     | ^  ^  |   ^|      " << std::endl;
+    std::cout << "   / |__| \\    \\    |       |  |      |       " << std::endl;
+    std::cout << "    /_/\\_\\     \\                               " << std::endl;
+    std::cout << "__________________\\                              " << std::endl;
+
     std::cout << "What is your name?\n";
     std::string name;
     std::cin >> name;
 
     std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1, 5));
     std::unique_ptr<Player> player1(new Player(name));
+
+    int checkpoint = 0;
+
     std::cout << "Welcome " << player1->getName() << "\n";
     //Player player1 = Player(name);
    /* int randomNum = 5;
@@ -184,8 +244,6 @@ int main()
 
     //Player* playerPtr = &player1;
     //std::unique_ptr<Player> playerPtr (player1);
-
-    //IncrementLevel(player1);
 
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
@@ -216,10 +274,12 @@ int main()
     {
         std::cout << "ERror loadin music\n";
     }
+   
+    std::cout << "Ready for Adventure!" << "\n";
+
     travelMusic.setLoop(true);
     travelMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
     travelMusic.play();
-    std::cout << "Ready for Adventure!" << "\n";
 
     player1->ShowStats();
 
@@ -357,6 +417,18 @@ int main()
     mountainMusic.play();
 
     mainArea->CastleMap();
+    mountainMusic.stop();
+
+    sf::Music castleMusic;
+
+    if (!castleMusic.openFromFile("music/Castle_Wandering-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "ERror loadin music\n";
+    }
+    castleMusic.setLoop(true);
+    castleMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(41.142)));
+    castleMusic.play();
+
     //Add Castle Music
     mainArea->CastleRooms();
 
@@ -369,16 +441,16 @@ int main()
         switch ((int)roomChoice)
         {
         case 1:
-            std::cout << "You entered room 1";
+            std::cout << "You entered room 1\n";
             break;
         case 2:
-            std::cout << "You entered room 2";
+            std::cout << "You entered room 2\n";
             break;
         case 3:
-            std::cout << "You entered room 3";
+            std::cout << "You entered room 3\n";
             break;
         }
-    } while (roomChoice < 0 && roomChoice > 3);
+    } while ((int)roomChoice < 0 && (int)roomChoice > 3);
 
     bool enterRoom = mainArea->RandomRoom();
 
@@ -396,7 +468,7 @@ int main()
     worldTravel();
     mainArea->RestMap();
 
-    mountainMusic.stop();
+    castleMusic.stop();
 
     std::unique_ptr<Enemy> chaoticWizard(new Enemy("Chaotic Wizard", 100, 5, 3, 100));
     bossSequence(player1, chaoticWizard, true);
