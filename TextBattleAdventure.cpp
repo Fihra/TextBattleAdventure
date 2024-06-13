@@ -51,6 +51,58 @@ void worldTravel()
     } while (step > 25);
 }
 
+void FadeOutMusic(sf::Music& musicTrack)
+{
+    sf::Clock clock;
+    sf::Time time = clock.getElapsedTime();
+    float volume = 100.f;
+    clock.restart();
+
+    while (true)
+    {
+        if (clock.getElapsedTime().asSeconds() > 0.20f)
+        {
+            if (volume <= 0)
+            {
+                break;
+            }
+            else
+            {
+                musicTrack.setVolume(volume -= 12.5f);
+            }
+            clock.restart();
+        }
+    }
+    musicTrack.pause();
+}
+
+void FadeInMusic(sf::Music& musicTrack)
+{
+    musicTrack.setVolume(0);
+    musicTrack.play();
+    sf::Clock clock;
+    sf::Time time = clock.getElapsedTime();
+    clock.restart();
+
+    float volume = 0.f;
+
+    while (true)
+    {
+        if (clock.getElapsedTime().asSeconds() > 0.20f)
+        {
+            if (volume >= 100)
+            {
+                break;
+            }
+            else
+            {
+                musicTrack.setVolume(volume += 12.5f);
+            }
+            clock.restart();
+        }
+    }
+}
+
 void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy)
 {
     std::cout << "====================\n";
@@ -116,8 +168,8 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
        
     }
 
-
-    battleMusic.stop();
+    FadeOutMusic(battleMusic);
+    //battleMusic.stop();
 }
 
 void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy, bool isFinalBoss = false)
@@ -198,7 +250,8 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
         bossSequence(player, enemy, isFinalBoss);
     }
 
-    bossMusic.stop();
+    FadeOutMusic(bossMusic);
+    //bossMusic.stop();
 }
 
 int main()
@@ -234,8 +287,6 @@ int main()
     std::unique_ptr<Enemy> goblin(new Enemy("Goblin", 5, 2, 1, 5));
     std::unique_ptr<Player> player1(new Player(name));
 
-    int checkpoint = 0;
-
     std::cout << "Welcome " << player1->getName() << "\n";
     //Player player1 = Player(name);
    /* int randomNum = 5;
@@ -244,10 +295,10 @@ int main()
 
     //Player* playerPtr = &player1;
     //std::unique_ptr<Player> playerPtr (player1);
+   
 
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
-
     srand((unsigned int)time(NULL));
 
     player1->SetStats(GenerateValuesMap());
@@ -265,6 +316,7 @@ int main()
         }
     } while (choice != 'n');
 
+    FadeOutMusic(startMusic);
     startMusic.stop();
 
     sf::Music travelMusic;
@@ -279,7 +331,8 @@ int main()
 
     travelMusic.setLoop(true);
     travelMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
-    travelMusic.play();
+    FadeInMusic(travelMusic);
+    //travelMusic.play();
 
     player1->ShowStats();
 
@@ -290,7 +343,8 @@ int main()
     travelMusic.pause();
     battleSequence(player1, goblin);
 
-    travelMusic.play();
+    FadeInMusic(travelMusic);
+    //travelMusic.play();
     std::cout << "Back on the road!\n";
 
     std::unique_ptr<Enemy> goblin2(new Enemy("Goblin2", 7, 4, 3, 10));
@@ -300,7 +354,8 @@ int main()
     travelMusic.pause();
 
     battleSequence(player1, goblin2);
-    travelMusic.play();
+    FadeInMusic(travelMusic);
+    //travelMusic.play();
     //PlaySound(TEXT("Travel_Theme.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
     worldTravel();
@@ -332,7 +387,8 @@ int main()
     } while (forkOneChoice != 'l' && forkOneChoice != 'r');
 
     std::cout << "You take the path to the " << currentArea << ".\n";
-    travelMusic.stop();
+    FadeOutMusic(travelMusic);
+    //travelMusic.stop();
     if (currentArea == "meadow")
     {
         sf::Music meadowMusic;
@@ -343,20 +399,24 @@ int main()
         }
         meadowMusic.setLoop(true);
         meadowMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(32)));
-        meadowMusic.play();
+        FadeInMusic(meadowMusic);
+        //meadowMusic.play();
 
         mainArea->MeadowMap();
         worldTravel();
         std::unique_ptr<Enemy> mushdoom(new Enemy("Mushdoom", 10, 5, 5, 20));
         meadowMusic.pause();
         battleSequence(player1, mushdoom);
-        meadowMusic.play();
+        FadeInMusic(meadowMusic);
+        //meadowMusic.play();
         worldTravel();
         std::unique_ptr<Enemy> boisonFlora(new Enemy("BoisonFlora", 25, 4, 9, 50));
         meadowMusic.pause();
         bossSequence(player1, boisonFlora);
-        meadowMusic.play();
-        meadowMusic.stop();
+        FadeInMusic(meadowMusic);
+        //meadowMusic.play();
+        FadeOutMusic(meadowMusic);
+        //meadowMusic.stop();
 
     }
     else if (currentArea == "forest")
@@ -369,7 +429,8 @@ int main()
         }
         forestMusic.setLoop(true);
         forestMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(27.692)));
-        forestMusic.play();
+        FadeInMusic(forestMusic);
+        //forestMusic.play();
 
         mainArea->ForestMap();
         worldTravel();
@@ -378,20 +439,24 @@ int main()
         std::unique_ptr<Enemy> squirrelSoldier(new Enemy("Squirrel Soldier", 15, 7, 4, 20));
         forestMusic.pause();
         battleSequence(player1, squirrelSoldier);
-        forestMusic.play();
+        FadeInMusic(forestMusic);
+        //forestMusic.play();
         worldTravel();
-        //Add Boss Music
         std::unique_ptr<Enemy> dearDeer(new Enemy("Dear Deer", 20, 8, 5, 50));
         forestMusic.pause();
         bossSequence(player1, dearDeer);
-        forestMusic.play();
+        FadeInMusic(forestMusic);
+        //forestMusic.play();
+        FadeOutMusic(forestMusic);
     }
 
-    travelMusic.play();
+    FadeInMusic(travelMusic);
+    //travelMusic.play();
     sf::Music mountainMusic;
 
     mainArea->RestMap();
-    travelMusic.stop();
+    FadeOutMusic(travelMusic);
+    //travelMusic.stop();
     
     if (!mountainMusic.openFromFile("music/Mountain_Climb-Battle_Text_Adventure.wav"))
     {
@@ -399,7 +464,8 @@ int main()
     }
     mountainMusic.setLoop(true);
     mountainMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(28.800)));
-    mountainMusic.play();
+    //mountainMusic.play();
+    FadeInMusic(mountainMusic);
 
     mainArea->MountainMap();
 
@@ -408,16 +474,19 @@ int main()
     mountainMusic.pause();
     std::unique_ptr<Enemy> mountainGiant(new Enemy("Mountain Giant", 25, 8, 6, 75));
     battleSequence(player1, mountainGiant);
-    mountainMusic.play();
+    FadeInMusic(mountainMusic);
+    //mountainMusic.play();
 
     worldTravel();
     std::unique_ptr<Enemy> flareFowl(new Enemy("Flare Fowl", 30, 10, 4, 100));
     mountainMusic.pause();
     battleSequence(player1, flareFowl);
-    mountainMusic.play();
+    FadeInMusic(mountainMusic);
+    //mountainMusic.play();
 
     mainArea->CastleMap();
-    mountainMusic.stop();
+    FadeOutMusic(mountainMusic);
+    //mountainMusic.stop();
 
     sf::Music castleMusic;
 
@@ -427,13 +496,12 @@ int main()
     }
     castleMusic.setLoop(true);
     castleMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(41.142)));
-    castleMusic.play();
+    FadeInMusic(castleMusic);
+    //castleMusic.play();
 
-    //Add Castle Music
     mainArea->CastleRooms();
 
     int roomChoice;
-
     do 
     {
         std::cin >> roomChoice;
@@ -467,7 +535,21 @@ int main()
 
     worldTravel();
     mainArea->RestMap();
-
+    
+    std::cout << "You enter the throne room of the castle. \n";
+    std::cout << "There is a wizard sitting at the throne. \n";
+    system("pause");
+    std::cout << "Wizard: WHO YOU?!!? Why has you come to \n";
+    std::cout << "my castle?? You dare challenge meh?!!!! \n";
+    std::cout << "-----------------------------------------\n";
+    system("pause");
+    std::cout << player1->getName() << ": I am here to stop\n";
+    std::cout << "with you evil ways of destruction!!\n";
+    std::cout << "-----------------------------------------\n";
+    system("pause");
+    std::cout << "Wizard: MWAHAHAHAHA! DO YOUR WORSE!!!!\n";
+    std::cout << "-----------------------------------------\n";
+    system("pause");
     castleMusic.stop();
 
     std::unique_ptr<Enemy> chaoticWizard(new Enemy("Chaotic Wizard", 100, 5, 3, 100));
