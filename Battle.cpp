@@ -13,8 +13,19 @@ void Battle::Attacking(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& 
 	std::vector<int> enemyStats = enemy->battleStats();
 
 	int damageDealing = (playerStats[2] - enemyStats[3]); //player atk - enemy def 
-	if (damageDealing < 0) {
-		damageDealing = 1;
+	if (playerStats[2] < enemyStats[3])
+	{
+		int loweredDamage = enemyStats[3] - playerStats[2];
+		if(abs(playerStats[2] - enemyStats[3]) < 5)
+		{
+			loweredDamage = 3;
+		}
+		else if (loweredDamage < 0)
+		{
+			loweredDamage = 1;
+		} 
+
+		damageDealing = loweredDamage;
 	}
 
 	std::cout << player->getName() << " deals " << damageDealing << " damage to " << enemy->getName() << "\n";
@@ -32,17 +43,29 @@ void Battle::Defending(std::unique_ptr<Enemy>& enemy, std::unique_ptr<Player>& p
 	enemy->ShowStats();
 	player->ShowStats();
 
-	std::cout << enemy->getName() << " attacks!" << "\n";
-
 	std::vector<int> enemyStats = enemy->battleStats();
 	std::vector<int> playerStats = player->battleStats();
 
 	int damageDealing = (enemyStats[2] - playerStats[3]); //enemy atk - player def 
-	if (damageDealing < 0) {
-		damageDealing = 1;
-	}
+	if (playerStats[3] > enemyStats[2])
+	{
+		int loweredDamage = playerStats[3] - enemyStats[2];
+		if(abs(playerStats[3] - enemyStats[2]) < 5)
+		{
+			loweredDamage = 3;
+		}
+		else if (loweredDamage < 0)
+		{
+			loweredDamage = 1;
+		} 
 
-	std::cout << enemy->getName() << " deals " << damageDealing << " damage to " << player->getName() << "\n";
+		damageDealing = loweredDamage;
+	}
+	//if (damageDealing < 0) {
+	//	damageDealing = 1;
+	//}
+
+	std::cout << enemy->getName() << " attacks & deals " << damageDealing << " damage to " << player->getName() << "\n";
 
 	player->setHP("attack", damageDealing);
 	DisplayPlayerStats(player, playerStats);

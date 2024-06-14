@@ -15,6 +15,28 @@
 
 #pragma comment(lib, "winmm.lib")
 
+sf::SoundBuffer buffer;
+sf::Sound sound;
+
+std::map<std::string, std::string> sfxMap = {
+        {"damagedSFX", "sfx/damagedSFX.wav"},
+        {"deathSFX", "sfx/deathSFX.wav"},
+        {"levelUpSFX", "sfx/levelUpSFX.wav"},
+        {"enemyAttack1SFX", "sfx/enemyAttack1SFX.wav"},
+        {"enemyAttack2SFX", "sfx/enemyAttack2SFX.wav"},
+        {"enemyAttack3SFX", "sfx/enemyAttack3SFX.wav"},
+        {"playerAttack1SFX", "sfx/playerAttack1SFX.wav"},
+        {"playerAttack2SFX", "sfx/playerAttack2SFX.wav"},
+        {"playerAttack3SFX", "sfx/playerAttack3SFX.wav"},
+};
+
+void PlaySFX(sf::SoundBuffer& buffer, sf::Sound& sound, std::string& fileURL)
+{
+    buffer.loadFromFile(fileURL);
+    sound.setBuffer(buffer);
+    sound.play();
+}
+
 int GenerateStats()
 {
     int randomNum = rand() % 10 + 1;
@@ -128,12 +150,15 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
     do
     {
         battle.Attacking(player, enemy);
+        PlaySFX(buffer, sound, sfxMap["playerAttack1SFX"]);
 
         if (enemy->battleStats()[1] <= 0)
         {
+            PlaySFX(buffer, sound, sfxMap["deathSFX"]);
             break;
         }
         battle.Defending(enemy, player);
+        PlaySFX(buffer, sound, sfxMap["enemyAttack1SFX"]);
 
         if (player->battleStats()[1] <= 0)
         {
@@ -149,7 +174,12 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
         std::cout << "===============================\n";
         std::cout << "Hooray!! You won the battle!\n";
         std::cout << enemy->getName() << " dropped " << enemy->getEXP() << " EXP.\n";
+        int oldLevel = player->getLevel();
         player->earnEXP(enemy->getEXP());
+        if (player->getLevel() > oldLevel)
+        {
+            PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
+        }
         std::cout << "===============================\n";
     }
     else
@@ -161,6 +191,7 @@ void battleSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& ene
         enemy->setHP("heal", 100);
         std::cout << "Quick level grind!\n";
         player->levelUpStats();
+        PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
         std::cout << "===============================\n";
         system("pause");
         battleMusic.stop();
@@ -208,12 +239,15 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
     do
     {
         battle.Attacking(player, enemy);
+        PlaySFX(buffer, sound, sfxMap["playerAttack1SFX"]);
 
         if (enemy->battleStats()[1] <= 0)
         {
+            PlaySFX(buffer, sound, sfxMap["deathSFX"]);
             break;
         }
         battle.Defending(enemy, player);
+        PlaySFX(buffer, sound, sfxMap["damagedSFX"]);
 
         if (player->battleStats()[1] <= 0)
         {
@@ -229,7 +263,12 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
         std::cout << "===============================\n";
         std::cout << "Hooray!! You won the battle!\n";
         //player->ShowStats();
+        int oldLevel = player->getLevel();
         player->earnEXP(enemy->getEXP());
+        if (player->getLevel() > oldLevel)
+        {
+            PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
+        }
         std::cout << enemy->getName() << " dropped " << enemy->getEXP() << " EXP.\n";
 
         //player->DisplayEXP();
@@ -244,6 +283,7 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
         enemy->setHP("heal", 100);
         std::cout << "Quick level grind!\n";
         player->levelUpStats();
+        PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
         std::cout << "===============================\n";
         system("pause");
         bossMusic.stop();
@@ -251,6 +291,72 @@ void bossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy
     }
 
     FadeOutMusic(bossMusic);
+    //bossMusic.stop();
+}
+
+void finalBossSequence(std::unique_ptr<Player>& player, std::unique_ptr<Enemy>& enemy)
+{
+    std::cout << "====================\n";
+    std::cout << "Boss TIME" << "\n";
+    std::cout << "====================\n";
+
+    Battle battle;
+    bool isAlive = true;
+
+    //int& playerHealth = player1->battleStats()[1];
+    //PlaySound(TEXT("BattleTheme_Test.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    do
+    {
+        battle.Attacking(player, enemy);
+        PlaySFX(buffer, sound, sfxMap["playerAttack1SFX"]);
+
+        if (enemy->battleStats()[1] <= 0)
+        {
+            PlaySFX(buffer, sound, sfxMap["deathSFX"]);
+            break;
+        }
+        battle.Defending(enemy, player);
+        PlaySFX(buffer, sound, sfxMap["enemyAttack1SFX"]);
+
+        if (player->battleStats()[1] <= 0)
+        {
+            player->setLifeStatus(false);
+            break;
+        }
+
+    } while (player->battleStats()[1] > 0);
+
+
+    if (player->lifeStatus())
+    {
+        std::cout << "===============================\n";
+        std::cout << "Hooray!! You won the battle!\n";
+        //player->ShowStats();
+        int oldLevel = player->getLevel();
+        player->earnEXP(enemy->getEXP());
+        if (player->getLevel() > oldLevel)
+        {
+            PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
+        }
+        std::cout << enemy->getName() << " dropped " << enemy->getEXP() << " EXP.\n";
+
+        //player->DisplayEXP();
+        std::cout << "===============================\n";
+    }
+    else
+    {
+        std::cout << "===============================\n";
+        std::cout << "Ooooof!! REMATCH!!!\n";
+        player->setLifeStatus(true);
+        player->setHP("heal", 100);
+        enemy->setHP("heal", 100);
+        std::cout << "Quick level grind!\n";
+        player->levelUpStats();
+        PlaySFX(buffer, sound, sfxMap["levelUpSFX"]);
+        std::cout << "===============================\n";
+        system("pause");
+        finalBossSequence(player, enemy);
+    }
     //bossMusic.stop();
 }
 
@@ -288,6 +394,7 @@ int main()
     std::unique_ptr<Player> player1(new Player(name));
 
     std::cout << "Welcome " << player1->getName() << "\n";
+    
     //Player player1 = Player(name);
    /* int randomNum = 5;
     int *ptr = &randomNum;
@@ -296,9 +403,9 @@ int main()
     //Player* playerPtr = &player1;
     //std::unique_ptr<Player> playerPtr (player1);
    
-
     std::cout << "Lets roll for stats" << "\n";
     system("pause");
+
     srand((unsigned int)time(NULL));
 
     player1->SetStats(GenerateValuesMap());
@@ -501,6 +608,8 @@ int main()
 
     mainArea->CastleRooms();
 
+    std::cout << "Walking through the corridors and hallways in this spoopy scary castle.\n";
+
     int roomChoice;
     do 
     {
@@ -527,6 +636,8 @@ int main()
         std::cout << "TRAP TIME!!\n";
         int trapDamage = rand() % 5 + 1;
         player1->setHP("attack", trapDamage);
+        PlaySFX(buffer, sound, sfxMap["damagedSFX"]);
+        player1->ShowStats();
     }
     else
     {
@@ -553,7 +664,19 @@ int main()
     castleMusic.stop();
 
     std::unique_ptr<Enemy> chaoticWizard(new Enemy("Chaotic Wizard", 100, 5, 3, 100));
-    bossSequence(player1, chaoticWizard, true);
+
+    sf::Music bossMusic;
+
+    if (!bossMusic.openFromFile("music/Wizard_Showdown-Battle_Text_Adventure.wav"))
+    {
+        std::cout << "ERror loadin music\n";
+    }
+    bossMusic.setLoop(true);
+    bossMusic.setLoopPoints(sf::Music::TimeSpan(sf::seconds(0), sf::seconds(64)));
+    bossMusic.play();
+
+    finalBossSequence(player1, chaoticWizard);
+    FadeOutMusic(bossMusic);
 
     sf::Music endingMusic;
 
